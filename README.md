@@ -15,22 +15,21 @@ This project documents the end-to-end deployment of an Active Directory Domain S
 | **ServiceNow** | Cloud SaaS | ITSM Platform | `https://dev427065.service-now.com` | Live Incident Intake, SLA Tracking, ITIL Work Notes, Resolution |
 
 ```mermaid
-graph TD
-    subgraph OnPrem ["On-Premises Infrastructure (VMware Virtual Network - 192.168.105.0/24)"]
-        DC01["DC01.corp.lab (Windows Server 2022)<br/>• Active Directory DS & DNS<br/>• Centralized GPO Management<br/>• Plant File Share (\\DC01\\Plant_Shares)"]
-        WS01["WS01.corp.lab (Windows 11 Client)<br/>• Domain-Joined Client<br/>• Auto-Mapped Drive (P:)<br/>• WinRM Remote Target"]
-
-        DC01 <-->|Kerberos Auth (Port 88) / LDAP / SMB (Port 445)| WS01
-        DC01 -->|Remote Management (WinRM 5985 / RPC 135)| WS01
+flowchart TD
+    subgraph OnPrem ["On-Premises Infrastructure (VMware 192.168.105.0/24)"]
+        DC01["DC01.corp.lab<br/>Windows Server 2022<br/>AD DS, DNS, File Shares"]
+        WS01["WS01.corp.lab<br/>Windows 11 Client<br/>Domain-Joined, Mapped P: Drive"]
+        DC01 ---|"Kerberos Auth (Port 88) / SMB (Port 445)"| WS01
+        DC01 -->|"Remote Management (WinRM 5985 / RPC 135)"| WS01
     end
 
     subgraph Cloud ["Enterprise Cloud ITSM"]
-        SN["ServiceNow Instance (dev427065)<br/>• Incident INC0010001<br/>• SLA Tracking & Work Notes"]
+        SN["ServiceNow dev427065<br/>Incident INC0010001<br/>State: Resolved"]
     end
 
-    Tech["Tier 2 Technician (Aman Singh)"] -->|Administers & Troubleshoots| DC01
-    Tech -->|Remotely Manages & Queries| WS01
-    Tech -->|Triages & Resolves Incidents| SN
+    Tech["Tier 2 Technician (Aman Singh)"] -->|"Administers AD & GPO"| DC01
+    Tech -->|"Remotely Manages Storage & Services"| WS01
+    Tech -->|"Triages & Resolves Tickets"| SN
 ```
 
 ---
