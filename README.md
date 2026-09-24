@@ -1,4 +1,4 @@
-﻿# Enterprise Windows Server, Active Directory & ServiceNow ITSM Lab
+# Enterprise Windows Server, Active Directory & ServiceNow ITSM Lab
 
 A hands-on enterprise infrastructure homelab built in VMware Workstation, simulating the onsite IT support operations of a manufacturing plant environment (**Westlake Corporation**). 
 
@@ -148,7 +148,28 @@ This repository includes practical scripts used for daily administration:
 
 ---
 
+## 🌐 Phase 2: Enterprise Hybrid Cloud Identity (In Active Deployment)
+
+Expanding the on-premises `corp.lab` foundation into a modern **Corporate Enterprise Hybrid Cloud** environment integrating with **Microsoft Entra ID (Azure AD)**:
+
+* 📄 **Detailed Technical Documentation:** [`documentation/lab2-hybrid-identity.md`](documentation/lab2-hybrid-identity.md)
+* 🗺️ **Master Hybrid Architecture Topology:** [`architecture/hybrid-architecture.png`](architecture/hybrid-architecture.png)
+
+```
+[On-Premises AD DS (corp.lab)] ──(Entra Connect: PHS & SSO)──> [Microsoft Entra ID Cloud Tenant]
+```
+
+### Current Status & Milestones:
+* [x] **Milestone 1:** Cloud UPN Suffix (`aman04048989gmail.onmicrosoft.com`) configured in Active Directory Domains and Trusts.
+* [x] **Milestone 2:** User identities updated with cloud-compatible UPN in ADUC.
+* [ ] **Milestone 3 (In Progress):** Deploying Microsoft Entra Connect with Password Hash Synchronization and OU filtering (`OU=Employees`, `OU=IT`).
+* [ ] **Milestone 4:** Verification of directory-synchronized identities in Microsoft Entra admin center.
+* [ ] **Milestone 5:** Seamless SSO authentication validation.
+
+---
+
 ## 👨‍💼 Author
 * **Aman Singh**
-* **Focus:** Tier 1 / Tier 2 IT Support • Desktop Administration • Junior Infrastructure
+* **Focus:** Tier 1 / Tier 2 IT Support • Desktop Administration • Junior Infrastructure & Cloud
 * **Certifications / Background:** Networking Diploma, AZ-900 (Certified), AZ-104 (In Progress)
+
