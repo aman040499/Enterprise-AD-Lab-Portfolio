@@ -31,7 +31,7 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 ---
 
 ### Milestone 2: User Identity UPN Alignment
-* **Implementation:** Updated the target production user account (`CORP\apsingh` - Aman Singh) within `OU=Employees,DC=corp,DC=lab` using Active Directory Users and Computers (ADUC).
+* **Implementation:** Updated the target production user account (`CORP\apsingh` - Aman Singh / Aman Pahuja) within `OU=Employees,DC=corp,DC=lab` using Active Directory Users and Computers (ADUC).
 * **Configuration:** Replaced the legacy logon suffix `@corp.lab` with the cloud-routable UPN `@aman04048989gmail.onmicrosoft.com`.
 * **Result:** User identity is aligned with the cloud tenant namespace prior to directory synchronization, ensuring clean identity matching and single-identity logon.
 
@@ -39,9 +39,36 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 
 ---
 
-### ⏳ Current Status: Milestone 3 (In Progress)
-* **Next Task:** Deploying **Microsoft Entra Connect** (`AzureADConnect.msi`) on `DC01`.
-* **Target Sync Settings:**
-  * Password Hash Synchronization (PHS)
-  * Seamless Single Sign-On (SSO)
-  * Targeted OU Filtering (`OU=Employees`, `OU=IT`)
+### Milestone 3: Microsoft Entra Connect Custom Deployment & Targeted OU Filtering
+* **Architecture Decision:** Rejected Express Settings to avoid synchronizing local machine accounts, service accounts, and built-in administrative objects.
+* **Sign-In Method:** Configured **Password Hash Synchronization (PHS)** as the primary identity method and enabled **Seamless Single Sign-On (Seamless SSO)** for corporate domain clients.
+* **OU Filtering:** Enforced granular filtering under `corp.lab`, synchronizing **only** designated production containers:
+  * `OU=Employees,DC=corp,DC=lab`
+  * `OU=IT,DC=corp,DC=lab`
+
+![Targeted Domain and OU Filtering](../images/lab2/03_entra_connect_ou_filtering.png)
+
+* **Pre-Flight Validation:** Reviewed configuration parameters before initiating directory export:
+
+![Ready to Configure Summary](../images/lab2/04_entra_connect_ready_to_configure.png)
+
+---
+
+### Milestone 4: Synchronization Execution & Cloud Verification
+* **Sync Engine Execution:** Executed the initial full export cycle via Microsoft Entra Connect Sync.
+* **Engine Completion:** Verified that directory synchronization services initialized and completed with zero sync engine errors.
+
+![Microsoft Entra Connect Configuration Complete](../images/lab2/06_entra_connect_sync_complete.png)
+
+* **Cloud Verification:** Inspected the **Microsoft Entra admin center** (`entra.microsoft.com`) under `Users > All users`.
+* **Telemetry Proof:**
+  * Synchronized identities (`Aman Pahuja`, `John Miller`, `John Smith`) are actively populated.
+  * Verified column attribute: **`On-premises sync enabled: Yes`**.
+  * Cloud-only administrative identities (`Cloud Administrator`) correctly remain isolated (`On-premises sync enabled: No`).
+
+![Microsoft Entra ID Synchronized Users Verified](../images/lab2/05_entra_synced_users.png)
+
+---
+
+### ⏳ Current Status: Milestone 5 (In Progress)
+* **Next Task:** Testing cloud portal sign-in (`myapps.microsoft.com`) using synchronized on-premises Active Directory password credentials (PHS validation) and verifying Seamless Single Sign-On from `WS01`.

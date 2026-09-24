@@ -162,9 +162,9 @@ Expanding the on-premises `corp.lab` foundation into a modern **Corporate Enterp
 ### Current Status & Milestones:
 * [x] **Milestone 1:** Cloud UPN Suffix (`aman04048989gmail.onmicrosoft.com`) configured in Active Directory Domains and Trusts.
 * [x] **Milestone 2:** User identities updated with cloud-compatible UPN in ADUC.
-* [ ] **Milestone 3 (In Progress):** Deploying Microsoft Entra Connect with Password Hash Synchronization and OU filtering (`OU=Employees`, `OU=IT`).
-* [ ] **Milestone 4:** Verification of directory-synchronized identities in Microsoft Entra admin center.
-* [ ] **Milestone 5:** Seamless SSO authentication validation.
+* [x] **Milestone 3:** Deployed Microsoft Entra Connect with Password Hash Synchronization and granular OU filtering (`OU=Employees`, `OU=IT`).
+* [x] **Milestone 4:** Verified live synchronized identities in Microsoft Entra admin center (`On-premises sync enabled: Yes`).
+* [ ] **Milestone 5 (Next):** Password Hash Synchronization authentication & Seamless SSO validation.
 
 ---
 
