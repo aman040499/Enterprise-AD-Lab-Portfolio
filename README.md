@@ -1,6 +1,6 @@
 # Enterprise Windows Server, Active Directory & ServiceNow ITSM Lab
 
-A hands-on enterprise infrastructure homelab built in VMware Workstation, simulating the onsite IT support operations of a manufacturing plant environment (**Westlake Corporation**). 
+A hands-on enterprise infrastructure homelab built in VMware Workstation.
 
 This project documents the end-to-end deployment of an Active Directory Domain Services environment, Group Policy security baselines, role-based network file sharing, remote endpoint orchestration, and **live incident lifecycle management using cloud-hosted ServiceNow**.
 
