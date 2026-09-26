@@ -70,5 +70,14 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 
 ---
 
-### ⏳ Current Status: Milestone 5 (In Progress)
-* **Next Task:** Testing cloud portal sign-in (`myapps.microsoft.com`) using synchronized on-premises Active Directory password credentials (PHS validation) and verifying Seamless Single Sign-On from `WS01`.
+### Milestone 5: Password Hash Synchronization (PHS) Authentication Validation
+* **Verification:** Performed end-to-end cloud authentication test at `https://myapps.microsoft.com` using the synchronized on-premises Active Directory password credentials.
+* **Troubleshooting Handled:** Resolved initial hash synchronization queue delay by performing an AD password event and triggering an incremental delta sync (`Start-ADSyncSyncCycle -PolicyType Delta`). Documented in [Case Study 05](../troubleshooting/05_password_hash_sync_authentication.md).
+* **Result:** User successfully authenticated and landed on the My Apps enterprise dashboard under active tenant session context.
+
+![Successful PHS Cloud Authentication](../images/lab2/07_phs_login_verified.png)
+
+---
+
+### ⏳ Current Status: Milestone 6 (In Progress)
+* **Next Task:** Seamless Single Sign-On (Seamless SSO) client validation from domain-joined client `WS01`.

@@ -164,7 +164,8 @@ Expanding the on-premises `corp.lab` foundation into a modern **Corporate Enterp
 * [x] **Milestone 2:** User identities updated with cloud-compatible UPN in ADUC.
 * [x] **Milestone 3:** Deployed Microsoft Entra Connect with Password Hash Synchronization and granular OU filtering (`OU=Employees`, `OU=IT`).
 * [x] **Milestone 4:** Verified live synchronized identities in Microsoft Entra admin center (`On-premises sync enabled: Yes`).
-* [ ] **Milestone 5 (Next):** Password Hash Synchronization authentication & Seamless SSO validation.
+* [x] **Milestone 5:** Validated Password Hash Synchronization cloud sign-in at `myapps.microsoft.com` ([Case Study 05](troubleshooting/05_password_hash_sync_authentication.md)).
+* [ ] **Milestone 6 (Next):** Seamless SSO validation from domain client `WS01`.
 
 ---
 
