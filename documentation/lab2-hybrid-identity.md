@@ -90,8 +90,58 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 
 ---
 
-## 📊 Summary of Phase 1 Outcomes
-* ✅ On-Premises AD DS extended to Microsoft Entra ID.
+### Milestone 7: Departmental Security Group Provisioning
+* **Objective:** Establish standard role- and department-based security groupings in on-premises Active Directory to support Access Control Lists (ACLs), file shares, and cloud licensing.
+* **Naming Standard:** Followed standard enterprise conventions (`SG-<Department>`):
+  * `SG-Corporate-Employees` (Global employee baseline)
+  * `SG-Finance`
+  * `SG-Human-Resources`
+  * `SG-IT-Support`
+* **Implementation:** Created the security groups within `OU=Employees,DC=corp,DC=lab` on `DC01`.
+
+![Departmental Security Groups Created in AD DS](../images/lab2/09_ad_security_groups_created.png)
+
+---
+
+### Milestone 8: Directory Delta Synchronization & Cloud Verification
+* **Sync Trigger:** Initiated an incremental delta synchronization cycle using PowerShell on `DC01`:
+  ```powershell
+  Start-ADSyncSyncCycle -PolicyType Delta
+  ```
+* **Cloud Portal Verification:** Navigated to Microsoft 365 admin center / Microsoft Entra admin center under `Groups > Active groups`.
+* **Telemetry Proof:**
+  * All four security groups (`SG-Corporate-Employees`, `SG-Finance`, `SG-Human-Resources`, `SG-IT-Support`) synchronized successfully.
+  * Verified sync attribute: **`Sync status: Synced from on-premises`**.
+
+![Cloud Synced Security Groups Verified](../images/lab2/10_cloud_synced_security_groups.png)
+
+---
+
+### Milestone 9: Scoped RBAC Role Assignment (Helpdesk Administrator)
+* **Principle of Least Privilege (PoLP):** Rather than granting high-risk Global Administrator permissions across all staff, administrative privileges were strictly scoped to the user's operational role.
+* **Role Scoping:** Assigned user `Aman Pahuja` (`CORP\apsingh`) the **Helpdesk Administrator** role within the Microsoft 365 / Entra admin center.
+* **Separation of Duties:** Break-glass/emergency administration remains exclusively with the isolated cloud-only Global Administrator (`cloudadmin@aman04048989gmail.onmicrosoft.com`), while daily user and password administration is delegated to the Helpdesk Administrator.
+
+![Helpdesk Administrator Scoped Role Assigned](../images/lab2/11_rbac_helpdesk_admin_assigned.png)
+
+---
+
+### Milestone 10: Least Privilege Boundary & Privilege Escalation Prevention Audit
+* **Testing Methodology:** Signed into `https://admin.cloud.microsoft` inside a clean InPrivate browsing session using the scoped `Aman Pahuja` (Helpdesk Admin) account.
+* **Privilege Escalation Test:** Navigated to role administration and attempted to edit administrative roles and assign the **Global Administrator** directory role.
+* **Security Enforcement:** Microsoft Entra ID blocked the action at the directory API level, presenting the security boundary alert:
+  > *"You don't have permission to save changes."*
+* **Security Value:** Proves defense-in-depth and operational compliance; a compromised helpdesk account cannot elevate itself or grant tenant-wide administrative privileges.
+
+![Least Privilege Boundary Enforced](../images/lab2/12_rbac_least_privilege_enforced.png)
+
+---
+
+## 📊 Summary of Hybrid Identity & Access Outcomes
+* ✅ On-Premises AD DS extended to Microsoft Entra ID with hybrid directory sync.
 * ✅ Password Hash Synchronization verified and functional.
 * ✅ Seamless Single Sign-On operational on Windows 11 endpoint (`WS01`).
-* ✅ Full evidence pipeline (Screenshots 01–08) validated.
+* ✅ Departmental Security Groups (`SG-*`) provisioned and synchronized (`Synced from on-premises`).
+* ✅ Role-Based Access Control (RBAC) operationalized with scoped `Helpdesk Administrator` delegation.
+* ✅ Principle of Least Privilege (PoLP) tested and verified against unauthorized privilege escalation.
+* ✅ Complete visual proof pipeline (Screenshots 01–12) validated.

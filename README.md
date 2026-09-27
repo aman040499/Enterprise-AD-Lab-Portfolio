@@ -166,6 +166,10 @@ Expanding the on-premises `corp.lab` foundation into a modern **Corporate Enterp
 * [x] **Milestone 4:** Verified live synchronized identities in Microsoft Entra admin center (`On-premises sync enabled: Yes`).
 * [x] **Milestone 5:** Validated Password Hash Synchronization cloud sign-in at `myapps.microsoft.com` ([Case Study 05](troubleshooting/05_password_hash_sync_authentication.md)).
 * [x] **Milestone 6:** Validated Seamless Single Sign-On (SSO) on Windows 11 client endpoint via Kerberos authentication.
+* [x] **Milestone 7:** Provisioned departmental Security Groups (`SG-*`) in on-premises AD for centralized ACL management.
+* [x] **Milestone 8:** Verified delta directory synchronization in cloud admin center (`Synced from on-premises`).
+* [x] **Milestone 9:** Implemented scoped Role-Based Access Control (`Helpdesk Administrator` assigned to local admin).
+* [x] **Milestone 10:** Audited and verified Principle of Least Privilege (PoLP) boundary blocking unauthorized role elevation.
 
 ---
 
