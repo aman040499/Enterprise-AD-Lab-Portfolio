@@ -11,7 +11,7 @@ This project documents the end-to-end deployment of an Active Directory Domain S
 | System / Host | Operating System | Role | IP Address / Location | Functions |
 | :--- | :--- | :--- | :--- | :--- |
 | **DC01** | Windows Server 2022 | Primary Domain Controller | `192.168.105.129` (Static) | AD DS, DNS (`corp.lab`), File Server (`\\DC01\Plant_Shares`), GPO Management |
-| **WS01** | Windows 11 Pro x64 | Plant Workstation | `192.168.105.x` (DHCP) | Domain Client, Mapped Drive `P:\`, Endpoint Logging, WinRM Remote Target |
+| **WS01** | Windows 11 Pro x64 | Corporate Workstation | `192.168.105.x` (DHCP) | Domain Client, Mapped Drive `P:\`, Endpoint Logging, WinRM Remote Target |
 | **ServiceNow** | Cloud SaaS | ITSM Platform | `https://dev427065.service-now.com` | Live Incident Intake, SLA Tracking, ITIL Work Notes, Resolution |
 
 ```mermaid
@@ -36,12 +36,12 @@ flowchart TD
 
 ## 🎫 Live ServiceNow Incident Management (ITIL)
 
-Rather than just simulating tickets in text, this lab integrates a live cloud **ServiceNow instance** (`https://dev427065.service-now.com`) to manage real plant support tickets from intake to resolution:
+Rather than just simulating tickets in text, this lab integrates a live cloud **ServiceNow instance** (`https://dev427065.service-now.com`) to manage enterprise corporate support tickets from intake to resolution:
 
 ![ServiceNow Resolved Incident](images/01_servicenow_resolved.png)
 
 ### Incident Breakdown: `INC0010001`
-* **Caller:** Aman Singh (Plant Operations / Maintenance)
+* **Caller:** Aman Singh (Corporate Operations / Logistics)
 * **Category:** Inquiry / Help
 * **Short Description:** `Cannot access \\DC01\Plant_Shares\IT_Restricted folder on WS01`
 * **State:** **Resolved** (Target SLA: Priority 4 - 2 Business Days)
@@ -50,7 +50,7 @@ Rather than just simulating tickets in text, this lab integrates a live cloud **
 
 ### The Triage & Resolution Process:
 1. **Diagnosis:** Investigated user account in Active Directory Users & Computers on DC01. Confirmed the user was a member of `GG_EMPLOYEES`, but was missing membership in `GG_IT_admins`. Verified that NTFS permissions on `\\DC01\Plant_Shares\IT_Restricted` had inheritance disabled and was restricted strictly to the IT admin group.
-2. **Security Compliance:** Did not grant individual folder permissions. Requested Plant Supervisor approval for maintenance shift access following least-privilege principles.
+2. **Security Compliance:** Did not grant individual folder permissions. Requested Department Supervisor approval for elevated access following least-privilege principles.
 3. **Remediation:** Added `CORP\apsingh` to `GG_IT_admins` in AD DS on DC01. Instructed the user to sign out and log back into WS01 to regenerate their Kerberos token with the updated group SID. Verified access was restored and closed the ticket.
 
 ---
@@ -97,7 +97,7 @@ To eliminate messy login scripts and manual technician mapping, a centralized ne
 ## ⚡ Remote Administration & Orchestration
 
 ### 1. Remote Group Policy Updates (From DC01)
-Instead of manually running `gpupdate /force` across individual plant workstations, updates are pushed remotely from DC01 across the `Workstations` OU using GPMC and PowerShell:
+Instead of manually running `gpupdate /force` across individual corporate workstations, updates are pushed remotely from DC01 across the `Workstations` OU using GPMC and PowerShell:
 
 ![Remote GPUpdate Success](images/02_remote_gpo_success.png)
 
@@ -144,7 +144,7 @@ D            Unknown         Healthy                 0 B   7.89 GB  WS01
 
 This repository includes practical scripts used for daily administration:
 * [`Export-ITHealthTelemetry.ps1`](scripts/Export-ITHealthTelemetry.ps1): Collects locked accounts, inactive users (>90 days), and Event ID 4625 logs into structured JSON for health audits and AI analysis.
-* [`New-PlantEmployee.ps1`](scripts/New-PlantEmployee.ps1): Automates employee provisioning with standardized username format, OU placement, and default security group assignment.
+* [`New-Employee.ps1`](scripts/New-Employee.ps1): Automates employee provisioning with standardized username format, OU placement, and default security group assignment.
 
 ---
 
@@ -159,13 +159,13 @@ Expanding the on-premises `corp.lab` foundation into a modern **Corporate Enterp
 [On-Premises AD DS (corp.lab)] ──(Entra Connect: PHS & SSO)──> [Microsoft Entra ID Cloud Tenant]
 ```
 
-### Current Status & Milestones:
+### Completed Milestones:
 * [x] **Milestone 1:** Cloud UPN Suffix (`aman04048989gmail.onmicrosoft.com`) configured in Active Directory Domains and Trusts.
 * [x] **Milestone 2:** User identities updated with cloud-compatible UPN in ADUC.
 * [x] **Milestone 3:** Deployed Microsoft Entra Connect with Password Hash Synchronization and granular OU filtering (`OU=Employees`, `OU=IT`).
 * [x] **Milestone 4:** Verified live synchronized identities in Microsoft Entra admin center (`On-premises sync enabled: Yes`).
 * [x] **Milestone 5:** Validated Password Hash Synchronization cloud sign-in at `myapps.microsoft.com` ([Case Study 05](troubleshooting/05_password_hash_sync_authentication.md)).
-* [ ] **Milestone 6 (Next):** Seamless SSO validation from domain client `WS01`.
+* [x] **Milestone 6:** Validated Seamless Single Sign-On (SSO) on Windows 11 client endpoint via Kerberos authentication.
 
 ---
 

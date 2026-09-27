@@ -1,8 +1,8 @@
-﻿# ==============================================================================
+# ==============================================================================
 # Script Name: Export-ITHealthTelemetry.ps1
 # Purpose:     Collects Active Directory health, locked accounts, and security logs
 #              into structured JSON for AI IT Operations analysis (Read-Only)
-# Environment: Westlake Pipe & Industrial Operations / Enterprise AD DS
+# Environment: Corporate Enterprise / Hybrid Active Directory DS
 # ==============================================================================
 
 [CmdletBinding()]

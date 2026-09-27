@@ -1,8 +1,8 @@
-﻿# ==============================================================================
-# Script Name: New-PlantEmployee.ps1
+# ==============================================================================
+# Script Name: New-Employee.ps1
 # Purpose:     Automated employee provisioning script enforcing OU placement,
 #              standardized naming, and Role-Based Access Control (RBAC)
-# Environment: Westlake Pipe & Industrial Operations
+# Environment: Corporate Enterprise / Hybrid Active Directory DS
 # ==============================================================================
 
 [CmdletBinding()]
@@ -26,7 +26,7 @@ param(
 $SamAccountName = ($FirstName.Substring(0,1) + $LastName).ToLower()
 $DisplayName    = "$FirstName $LastName"
 $UserPrincipal  = "$SamAccountName@corp.lab"
-$DefaultPass    = ConvertTo-SecureString "WestlakeWelcome2026!" -AsPlainText -Force
+$DefaultPass    = ConvertTo-SecureString "CorpWelcome2026!" -AsPlainText -Force
 
 Write-Host "[*] Provisioning directory account for $DisplayName ($SamAccountName)..." -ForegroundColor Cyan
 

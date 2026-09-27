@@ -1,7 +1,7 @@
 # Lab 2: Enterprise Hybrid Identity & Microsoft Entra ID Sync
 
 ## 🎯 Objective
-Extend the on-premises Active Directory Domain Services infrastructure (`corp.lab`) into a modern **Hybrid Cloud Identity** architecture by synchronizing directory objects, security groups, and password hashes with a live **Microsoft Entra ID (formerly Azure AD)** tenant.
+Extend the on-premises Active Directory Domain Services infrastructure (`corp.lab`) into a modern **Hybrid Cloud Identity** architecture by synchronizing directory objects, security groups, and password hashes with a live **Microsoft Entra ID (formerly Azure AD)** tenant, and validating **Seamless Single Sign-On (SSO)** on domain endpoints.
 
 ---
 
@@ -19,7 +19,7 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 
 ---
 
-## 🛠️ Implementation Progress
+## 🛠️ Implementation & Evidence Milestones
 
 ### Milestone 1: Alternative UPN Suffix Configuration
 * **Challenge:** The on-premises forest uses a non-routable top-level domain (`.lab`). Public cloud identity services cannot route or federate non-routable domains, which would cause Entra ID to assign unexpected fallback routing aliases (`@*.onmicrosoft.com`).
@@ -79,5 +79,19 @@ Extend the on-premises Active Directory Domain Services infrastructure (`corp.la
 
 ---
 
-### ⏳ Current Status: Milestone 6 (In Progress)
-* **Next Task:** Seamless Single Sign-On (Seamless SSO) client validation from domain-joined client `WS01`.
+### Milestone 6: Seamless Single Sign-On (Seamless SSO) Endpoint Validation
+* **Mechanism:** When Seamless SSO is enabled, Entra Connect creates a dedicated computer account (`AZUREADSSOACC`) in on-premises AD. Windows domain-joined endpoints query this SPN to obtain Kerberos service tickets for Microsoft's cloud login endpoints.
+* **Client Configuration:** Added `https://autologon.microsoftazuread-sso.com` to the **Local Intranet Zone** on client endpoint `WS01`.
+* **Testing:** Navigated to `https://myapps.microsoft.com` inside Microsoft Edge on `WS01` as user `CORP\apsingh`.
+* **Result:** The browser silently negotiated authentication via Kerberos ticket exchange without prompting for user password input, signing straight into the enterprise dashboard.
+* **Cryptographic Proof:** Executed `klist` in PowerShell on `WS01` confirming cached Kerberos service tickets for domain controller communication and cloud endpoint authentication.
+
+![Seamless SSO Kerberos Ticket and Silent Portal Authentication](../images/lab2/08_seamless_sso_verified.png)
+
+---
+
+## 📊 Summary of Phase 1 Outcomes
+* ✅ On-Premises AD DS extended to Microsoft Entra ID.
+* ✅ Password Hash Synchronization verified and functional.
+* ✅ Seamless Single Sign-On operational on Windows 11 endpoint (`WS01`).
+* ✅ Full evidence pipeline (Screenshots 01–08) validated.
