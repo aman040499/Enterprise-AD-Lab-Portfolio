@@ -1,65 +1,57 @@
-# Troubleshooting Case Study 05: Password Hash Synchronization (PHS) Initial Authentication Failure
+# Troubleshooting Case Study 05: Password Hash Sync (PHS) Initial Sign-In Issue
 
-## 🔍 Incident Overview
-* **System Affected:** Microsoft Entra ID Cloud Authentication / Identity Federation
-* **User Account:** `apsingh@aman04048989gmail.onmicrosoft.com` (`CORP\apsingh`)
-* **Environment:** Hybrid Active Directory DS (`corp.lab`) ⟷ Microsoft Entra Connect ⟷ Microsoft Entra ID
-* **Severity:** Medium (User unable to authenticate to cloud SaaS portal)
+## Overview
+* **Issue:** User couldn't sign into Microsoft 365 / My Apps portal after initial hybrid sync.
+* **Account:** `apsingh@aman04048989gmail.onmicrosoft.com` (On-Prem: `CORP\apsingh`)
+* **Environment:** On-Prem Windows Server 2022 AD DS ⟷ Microsoft Entra Connect ⟷ Microsoft Entra ID (Azure AD)
 
 ---
 
-## 🛑 Problem / Symptom
-Following the successful initial export of Active Directory users to Microsoft Entra ID via Microsoft Entra Connect, an authentication attempt was conducted at `https://myapps.microsoft.com`.
+## 🛑 What Happened (The Symptom)
+Right after finishing the Microsoft Entra Connect setup wizard, I opened an InPrivate browser window to test cloud sign-in at `https://myapps.microsoft.com`.
 
-While the cloud platform successfully resolved the user principal name (`apsingh@aman04048989gmail.onmicrosoft.com`), password submission was immediately rejected with the following error:
+When I typed the username `apsingh@aman04048989gmail.onmicrosoft.com`, Microsoft recognized the account right away. But when I typed the password, it failed with this error:
 > *"Your account or password is incorrect. If you don't remember your password, reset it now."*
 
 ---
 
-## 🔎 Investigation
-1. **Cloud Identity Verification:**
-   * Inspected the user object in the Microsoft Entra admin center (`entra.microsoft.com`).
-   * Confirmed the identity existed with `On-premises sync enabled: Yes` and `User type: Member`.
-   * This confirmed that directory synchronization of the user object itself had succeeded, eliminating UPN mismatch as the root issue.
-2. **Replication Architecture Analysis:**
-   * In Microsoft Entra Connect architecture, object synchronization (attributes, names, group memberships) operates on the standard sync schedule, whereas **Password Hash Synchronization (PHS)** relies on a dedicated directory replication channel via Remote Procedure Call (RPC) targeting the Active Directory Security Accounts Manager (SAM).
-   * If a user account has not triggered a password change event since Entra Connect's initial installation, or if the initial hash replication batch has not traversed the queue, the cloud directory possesses no corresponding password hash.
-3. **Account State Inspection:**
-   * Checked the account attributes in Active Directory Users and Computers (ADUC) on `DC01`. Verified the account was unlocked and the password was not expired.
+## 🔎 What I Checked (Investigation)
+1. **Did the user actually sync to the cloud?**
+   * I checked the **Microsoft Entra admin center** (`entra.microsoft.com`) under **Users > All users**.
+   * The user `Aman Pahuja` was clearly there with **`On-premises sync enabled: Yes`**.
+   * This confirmed that directory synchronization worked and the User Principal Name (UPN) matched. The problem was specifically with the password.
+2. **Why didn't the password work?**
+   * In Microsoft Entra Connect, user accounts (names, emails, groups) and passwords sync through two different mechanisms.
+   * User attributes sync during the standard sync cycle, but **Password Hash Synchronization (PHS)** runs as a background service that reads password hashes from the on-premises Active Directory database (`NTDS.dit`).
+   * Because the user account had not had a password change event since Entra Connect was installed, the cloud tenant didn't have the updated password hash yet.
 
 ---
 
-## 🎯 Root Cause
-The initial synchronization export created the cloud identity object before the Password Hash Synchronization agent completed the cryptographic hash extraction and transport cycle from `NTDS.dit`. Consequently, Entra ID had no synchronized hash against which to validate the credential attempt.
-
----
-
-## 🛠️ Resolution & Remediation
-1. **Triggered an Explicit Password Change Event:**
-   * On `DC01`, opened **Active Directory Users and Computers**.
-   * Right-clicked `CORP\apsingh` $\rightarrow$ **Reset Password**.
-   * Set a strong password (`Canada2026!#`) and ensured **"User must change password at next logon"** was **unchecked**.
-2. **Forced Immediate Delta Replication:**
-   * Opened PowerShell as Administrator on `DC01` and manually triggered an incremental synchronization cycle:
+## 🛠️ How I Fixed It (Resolution)
+1. **Reset the password in Active Directory:**
+   * On **DC01**, opened **Active Directory Users and Computers (ADUC)**.
+   * Right-clicked `CORP\apsingh` $\rightarrow$ clicked **Reset Password**.
+   * Entered a new `# Strong temporary password` and made sure **"User must change password at next logon"** was unchecked.
+2. **Forced an immediate Delta Sync:**
+   * Instead of waiting 30 minutes for the next scheduled sync, I opened PowerShell on `DC01` as Administrator and forced an incremental sync:
      ```powershell
      Start-ADSyncSyncCycle -PolicyType Delta
      ```
-   * Monitored the sync cycle execution until it reported `Result : Success`.
-3. **Propagation Buffer:**
-   * Allowed a 60-second propagation window for the encrypted hash to traverse HTTPS port 443 to the Entra ID authentication endpoints.
+   * The command returned `Result : Success`.
+3. **Waited 60 seconds:**
+   * Gave Microsoft Entra ID about a minute to receive and process the new password hash over HTTPS.
 
 ---
 
 ## ✅ Verification
-* Opened an InPrivate browser session and navigated to `https://myapps.microsoft.com`.
-* Submitted credentials:
-  * Username: `apsingh@aman04048989gmail.onmicrosoft.com`
-  * Password: `Canada2026!#`
-* **Result:** Authentication succeeded immediately with zero credential warnings.
-* The user successfully accessed the **My Apps** enterprise dashboard under the tenant `Default Directory` with the profile card confirming active session context.
+1. Went back to the InPrivate browser window and went to `https://myapps.microsoft.com`.
+2. Signed in with:
+   * **Username:** `apsingh@aman04048989gmail.onmicrosoft.com`
+   * **Password:** `<# Strong Password #>`
+3. **Result:** The login went through immediately with zero errors! The browser opened straight to the My Apps dashboard under my tenant.
 
 ---
 
-## 🛡️ Preventive Action & Best Practices
-* **Initial Onboarding Procedure:** When deploying Microsoft Entra Connect in production, include an automated password hash sync check or instruct helpdesk staff that newly synced accounts require either a delta sync trigger or a 15–30 minute replication window before end-user notification.
-* **Audit Telemetry:** Monitor Windows Event Viewer on the synchronization server under `Application > Directory Synchronization` for Event ID 656 and 657 (PHS heartbeat and password batch export status).
+## 💡 What I Learned (Takeaway for Interviews)
+* In a hybrid enterprise setup, account creation and password sync operate on separate pipelines.
+* If a newly synced user can't sign in right away, don't panic or rebuild Entra Connect. A simple password reset in Active Directory combined with a PowerShell delta sync (`Start-ADSyncSyncCycle -PolicyType Delta`) immediately pushes the fresh hash to the cloud.
