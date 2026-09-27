@@ -38,7 +38,7 @@ The initial synchronization export created the cloud identity object before the 
 1. **Triggered an Explicit Password Change Event:**
    * On `DC01`, opened **Active Directory Users and Computers**.
    * Right-clicked `CORP\apsingh` $\rightarrow$ **Reset Password**.
-   * Set a strong password (`Canada2026!#`) and ensured **"User must change password at next logon"** was **unchecked**.
+   * Set a strong password and ensured **"User must change password at next logon"** was **unchecked**.
 2. **Forced Immediate Delta Replication:**
    * Opened PowerShell as Administrator on `DC01` and manually triggered an incremental synchronization cycle:
      ```powershell
