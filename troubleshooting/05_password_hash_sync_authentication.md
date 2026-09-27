@@ -54,4 +54,4 @@ When I typed the username `apsingh@aman04048989gmail.onmicrosoft.com`, Microsoft
 
 ## 💡 What I Learned
 * In a hybrid enterprise setup, account creation and password sync operate on separate pipelines.
-* If a newly synced user can't sign in right away, don't panic or rebuild Entra Connect. A simple password reset in Active Directory combined with a PowerShell delta sync (`Start-ADSyncSyncCycle -PolicyType Delta`) immediately pushes the fresh hash to the cloud.
+* If a newly synced user can't sign in right away, don't rebuild Entra Connect. A simple password reset in Active Directory combined with a PowerShell delta sync (`Start-ADSyncSyncCycle -PolicyType Delta`) immediately pushes the fresh hash to the cloud.
