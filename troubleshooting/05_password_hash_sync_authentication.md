@@ -31,7 +31,7 @@ When I typed the username `apsingh@aman04048989gmail.onmicrosoft.com`, Microsoft
 1. **Reset the password in Active Directory:**
    * On **DC01**, opened **Active Directory Users and Computers (ADUC)**.
    * Right-clicked `CORP\apsingh` $\rightarrow$ clicked **Reset Password**.
-   * Entered a `# Strong temporary password` and made sure **"User must change password at next logon"** was unchecked.
+   * Entered a strong temporary password meeting domain complexity requirements, and made sure **"User must change password at next logon"** was unchecked for initial validation.
 2. **Forced an immediate Delta Sync:**
    * Instead of waiting 30 minutes for the next scheduled sync, I opened PowerShell on `DC01` as Administrator and forced an incremental sync:
      ```powershell
@@ -47,7 +47,7 @@ When I typed the username `apsingh@aman04048989gmail.onmicrosoft.com`, Microsoft
 1. Went back to the InPrivate browser window and went to `https://myapps.microsoft.com`.
 2. Signed in with:
    * **Username:** `apsingh@aman04048989gmail.onmicrosoft.com`
-   * **Password:** `# Strong temporary password`
+   * **Password:** `[Strong Temporary Password]`
 3. **Result:** The login went through immediately with zero errors! The browser opened straight to the My Apps dashboard under my tenant.
 
 ---
